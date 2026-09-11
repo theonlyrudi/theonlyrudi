@@ -14,6 +14,12 @@ Eine GAEB-Datei lädt man über **Datei öffnen** oder indem man sie irgendwo au
 das Fenster zieht. Beim Start ist ein Beispiel-Leistungsverzeichnis geladen,
 damit sofort sichtbar ist, was das Programm kann.
 
+Dieselbe Oberfläche liegt zusätzlich als veröffentlichte Seite bereit –
+praktisch, wenn das Repository gerade nicht zur Hand ist:
+<https://claude.ai/code/artifact/0e26482b-12d5-4c95-b603-4e95dc626424>.
+Dort reicht der CSV-Export die Datei über den Speichern-Dialog des Betrachters
+weiter, weil die eingebettete Seite keine eigenen Downloads starten darf.
+
 ## Was gelesen wird
 
 * **GAEB DA XML 3.x** in allen Austauschphasen – X81 bis X89. Der Schwerpunkt

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Leistungsverzeichnis lesen</title>
+<title>GAEB-Leistungsverzeichnis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -1157,6 +1157,27 @@ button, input, select { font: inherit; color: inherit; }
   async function csvExportieren() {
     const csv = '﻿' + csvErzeugen();
     const name = (state.dateiname.replace(/\.[^.]+$/, '') || 'leistungsverzeichnis') + '.csv';
+
+    /* Als veröffentlichte Seite läuft der Viewer in einer Sandbox, die eigene
+       Downloads unterbindet; dort reicht der Betrachter die Datei durch. */
+    const speicher = window.claude && typeof window.claude.use === 'function'
+      ? await window.claude.use('downloads').catch(() => null)
+      : null;
+
+    if (speicher) {
+      try {
+        await speicher.save({ filename: name, data: csv });
+        melden('CSV als ' + name + ' gespeichert (Semikolon-getrennt, Excel-tauglich).', false);
+      } catch (fehler) {
+        const abgebrochen = fehler && fehler.code === 'declined';
+        melden(
+          abgebrochen ? 'Speichern abgebrochen.' : 'CSV konnte nicht gespeichert werden: ' + ((fehler && fehler.message) || 'unbekannter Fehler'),
+          !abgebrochen
+        );
+      }
+      return;
+    }
+
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
