@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leistungsverzeichnis lesen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root {
+  --paper: #f1f4f3;
+  --surface: #ffffff;
+  --surface-2: #f7f9f8;
+  --ink: #16211f;
+  --ink-2: #5a6864;
+  --ink-3: #8a9691;
+  --line: #d9e0dd;
+  --line-strong: #c2ccc8;
+  --accent: #0c5c55;
+  --accent-ink: #ffffff;
+  --accent-soft: #e0ede9;
+  --warn: #92550f;
+  --warn-soft: #f7ecda;
+  --alt: #55488a;
+  --alt-soft: #eae7f5;
+  --neutral-soft: #e8ecea;
+  --shadow: 0 1px 2px rgba(22, 33, 31, .06), 0 8px 24px -16px rgba(22, 33, 31, .35);
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1513;
+    --surface: #171e1c;
+    --surface-2: #1d2523;
+    --ink: #e3eae7;
+    --ink-2: #94a29d;
+    --ink-3: #6e7c78;
+    --line: #29332f;
+    --line-strong: #38443f;
+    --accent: #58c3b2;
+    --accent-ink: #08211e;
+    --accent-soft: #142d29;
+    --warn: #dda56a;
+    --warn-soft: #2d2416;
+    --alt: #a99ad9;
+    --alt-soft: #232045;
+    --neutral-soft: #232b29;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px -18px rgba(0, 0, 0, .8);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1513;
+  --surface: #171e1c;
+  --surface-2: #1d2523;
+  --ink: #e3eae7;
+  --ink-2: #94a29d;
+  --ink-3: #6e7c78;
+  --line: #29332f;
+  --line-strong: #38443f;
+  --accent: #58c3b2;
+  --accent-ink: #08211e;
+  --accent-soft: #142d29;
+  --warn: #dda56a;
+  --warn-soft: #2d2416;
+  --alt: #a99ad9;
+  --alt-soft: #232045;
+  --neutral-soft: #232b29;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px -18px rgba(0, 0, 0, .8);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+/* ---------- Grundgerüst ---------- */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  max-height: 100%;
+}
+
+/* ---------- Kopfleiste ---------- */
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  padding: 14px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin-right: auto; min-width: 0; }
+.brand h1 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  margin: 0;
+}
+.brand .phase {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 3px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease;
+}
+.btn:hover { background: var(--surface-2); border-color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.btn-primary:hover { background: var(--accent); filter: brightness(1.08); }
+.btn svg { width: 15px; height: 15px; flex: none; }
+
+/* ---------- Deckblatt ---------- */
+.deckblatt {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding: 0 20px 16px;
+}
+.deckblatt[hidden] { display: none; }
+.deckblatt .projekt {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3vw, 26px);
+  font-weight: 600;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+  margin: 0 0 4px;
+}
+.deckblatt .untertitel { color: var(--ink-2); margin: 0 0 14px; max-width: 70ch; }
+.datenblatt {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.datenblatt div {
+  padding: 9px 12px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.datenblatt dt {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 2px;
+}
+.datenblatt dd { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
+.datenblatt dd.zahl { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* ---------- Arbeitsfläche ---------- */
+.workspace {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 27rem);
+  gap: 1px;
+  background: var(--line);
+  min-height: 0;
+}
+.lv, .detail { background: var(--paper); display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+
+.lv-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.suche { position: relative; flex: 1 1 220px; min-width: 0; }
+.suche input {
+  width: 100%;
+  padding: 7px 30px 7px 32px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: var(--surface-2);
+}
+.suche svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; color: var(--ink-3); }
+.suche button {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  border: 0; background: none; cursor: pointer; color: var(--ink-3); padding: 4px 6px; line-height: 1;
+}
+.treffer { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+
+/* ---------- Tabelle ---------- */
+.lv-scroll { flex: 1; overflow: auto; min-width: 0; }
+.tabelle { min-width: 560px; }
+.kopfzeile, .zeile {
+  display: grid;
+  grid-template-columns: var(--spalten);
+  align-items: baseline;
+  gap: 12px;
+  padding: 0 16px;
+}
+.kopfzeile {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line-strong);
+  padding-block: 7px;
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.zeile {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  text-align: left;
+  padding-block: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+}
+.zeile:hover { background: var(--surface-2); }
+.zeile[aria-selected="true"] { background: var(--accent-soft); }
+.zeile .oz {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.zeile .bezeichnung { min-width: 0; }
+.zeile .bezeichnung > span:first-child { display: block; overflow-wrap: anywhere; }
+.zeile .zahl {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+.zeile .einheit { font-size: 13px; color: var(--ink-2); }
+
+.zeile.gruppe { background: var(--surface); }
+.zeile.gruppe:hover { background: var(--surface-2); }
+.zeile.gruppe .bezeichnung > span:first-child {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -.005em;
+}
+.zeile.gruppe.ebene-0 { border-top: 2px solid var(--line-strong); }
+.zeile.gruppe.ebene-0 .bezeichnung span { font-size: 15.5px; }
+.zeile.gruppe .oz { color: var(--ink); font-weight: 500; }
+.zeile.hinweis .bezeichnung > span:first-child { color: var(--ink-2); font-style: italic; }
+
+.klapper {
+  display: inline-flex;
+  width: 14px;
+  margin-right: 4px;
+  color: var(--ink-3);
+  transition: transform .12s ease;
+}
+.zeile.zu .klapper { transform: rotate(-90deg); }
+.einzug { display: inline-block; }
+
+.marker { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.chip {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--neutral-soft);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.chip.bedarf { background: var(--warn-soft); color: var(--warn); }
+.chip.alternativ, .chip.grund { background: var(--alt-soft); color: var(--alt); }
+.chip.bte { background: var(--accent-soft); color: var(--accent); }
+
+/* ---------- Detailspalte ---------- */
+.detail { background: var(--surface); border-left: 0; }
+.detail-scroll { flex: 1; overflow: auto; padding: 20px; }
+.detail .eyebrow {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.detail .oz-gross {
+  font-family: var(--font-mono);
+  font-size: 19px;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  margin: 2px 0 6px;
+}
+.detail h2 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+  margin: 0 0 12px;
+}
+.mengenblock {
+  display: flex;
+  flex-wrap: wrap;
+  background: var(--surface-2);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 14px 0 18px;
+}
+.mengenblock div {
+  flex: 1 1 90px;
+  padding: 9px 12px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.mengenblock dt {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 2px;
+}
+.mengenblock dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.langtext {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  max-width: 62ch;
+  overflow-wrap: anywhere;
+}
+.langtext p { margin: 0 0 .7em; }
+.langtext p:last-child { margin-bottom: 0; }
+.tx-tab { display: inline-block; width: 2.5em; }
+.tx-complement {
+  background: var(--accent-soft);
+  border-bottom: 1.5px dashed var(--accent);
+  padding: 0 4px;
+  border-radius: 2px 2px 0 0;
+}
+.tx-complement:empty::after { content: "…"; }
+.detail-fuss {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-3);
+}
+.detail-schliessen { display: none; }
+
+/* ---------- Platzhalter, Statuszeile ---------- */
+.platzhalter { padding: 28px 20px; color: var(--ink-2); max-width: 46ch; }
+.platzhalter h3 { font-family: var(--font-display); font-size: 15px; margin: 0 0 6px; color: var(--ink); }
+.platzhalter ul { margin: 10px 0 0; padding-left: 18px; }
+.platzhalter li { margin-bottom: 4px; }
+
+.statuszeile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  padding: 8px 20px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.statuszeile .summe {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.statuszeile b { font-family: var(--font-mono); font-weight: 500; color: var(--ink); }
+
+.hinweisbanner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 13.5px;
+  border-bottom: 1px solid var(--line);
+}
+.hinweisbanner[hidden] { display: none; }
+.hinweisbanner.fehler { background: var(--warn-soft); color: var(--warn); }
+.hinweisbanner button {
+  margin-left: auto; border: 1px solid currentColor; background: none; color: inherit;
+  border-radius: 4px; padding: 3px 9px; font-size: 12.5px; cursor: pointer;
+}
+
+/* ---------- Ablage-Overlay ---------- */
+.ablage {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  place-items: center;
+  background: rgba(12, 92, 85, .12);
+  backdrop-filter: blur(2px);
+}
+.ablage.aktiv { display: grid; }
+.ablage div {
+  background: var(--surface);
+  border: 2px dashed var(--accent);
+  border-radius: 8px;
+  padding: 28px 36px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 900px) {
+  .workspace { grid-template-columns: minmax(0, 1fr); }
+  .detail {
+    position: fixed;
+    inset: auto 0 0 0;
+    max-height: 78vh;
+    z-index: 15;
+    border-top: 1px solid var(--line-strong);
+    border-radius: 10px 10px 0 0;
+    box-shadow: var(--shadow);
+    transform: translateY(101%);
+    transition: transform .18s ease;
+  }
+  .detail.offen { transform: none; }
+  .detail-schliessen {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 12px 0;
+  }
+  .detail-schliessen button { border: 0; background: none; cursor: pointer; color: var(--ink-2); padding: 4px 8px; }
+  .detail .platzhalter { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+@media print {
+  .topbar, .lv-toolbar, .statuszeile, .detail, .hinweisbanner, .ablage { display: none !important; }
+  body, .lv, .lv-scroll { background: #fff; color: #000; overflow: visible; height: auto; max-height: none; }
+  .app { max-height: none; }
+  .zeile { break-inside: avoid; }
+  .deckblatt { border: 0; padding-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <h1>GAEB-Leistungsverzeichnis</h1>
+      <span class="phase" id="phase-anzeige">X83 · Angebotsaufforderung</span>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" id="btn-oeffnen">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1.5 4.5h4l1.5 2h7.5v7a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-9z"/></svg>
+        Datei öffnen
+      </button>
+      <input type="file" id="datei" accept=".x83,.X83,.x81,.x82,.x84,.x85,.x86,.x89,.xml,.zip" hidden>
+      <button class="btn" id="btn-deckblatt" aria-expanded="true" aria-controls="deckblatt">Projektdaten</button>
+      <button class="btn" id="btn-alle-auf">Alles aufklappen</button>
+      <button class="btn" id="btn-alle-zu">Alles zuklappen</button>
+      <button class="btn" id="btn-csv">CSV</button>
+      <button class="btn" id="btn-drucken">Drucken</button>
+    </div>
+  </header>
+
+  <div class="hinweisbanner" id="banner" role="status">
+    <span id="banner-text"></span>
+    <button type="button" id="banner-zu">Schließen</button>
+  </div>
+
+  <section class="deckblatt" id="deckblatt">
+    <h2 class="projekt" id="projektname"></h2>
+    <p class="untertitel" id="projektbeschreibung"></p>
+    <dl class="datenblatt" id="datenblatt"></dl>
+  </section>
+
+  <main class="workspace">
+    <section class="lv" aria-label="Leistungsverzeichnis">
+      <div class="lv-toolbar">
+        <label class="suche">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+          <input type="search" id="suchfeld" placeholder="Ordnungszahl, Kurz- oder Langtext durchsuchen" aria-label="Leistungsverzeichnis durchsuchen">
+          <button type="button" id="suche-leeren" aria-label="Suche zurücksetzen" hidden>✕</button>
+        </label>
+        <span class="treffer" id="treffer"></span>
+      </div>
+      <div class="lv-scroll">
+        <div class="tabelle" id="tabelle" role="tree" aria-label="Positionen"></div>
+      </div>
+    </section>
+
+    <aside class="detail" id="detail" aria-label="Positionsdetails" aria-live="polite">
+      <div class="detail-schliessen"><button type="button" id="detail-zu" aria-label="Detailansicht schließen">✕ Schließen</button></div>
+      <div class="detail-scroll" id="detail-inhalt"></div>
+    </aside>
+  </main>
+
+  <footer class="statuszeile" id="statuszeile"></footer>
+</div>
+
+<div class="ablage" id="ablage" aria-hidden="true"><div>GAEB-Datei hier ablegen</div></div>
+
+<script type="text/plain" id="beispiel-lv">
+<?xml version="1.0" encoding="UTF-8"?>
+<GAEB xmlns="http://www.gaeb.de/GAEB_DA_XML/DA86/3.2">
+  <GAEBInfo>
+    <Version>3.2</Version>
+    <VersDate>2013-12</VersDate>
+    <Date>2026-02-17</Date>
+    <Time>09:42:11</Time>
+    <ProgSystem>Beispieldaten GAEB-Viewer</ProgSystem>
+  </GAEBInfo>
+  <PrjInfo>
+    <NamePrj>Grundhafte Erneuerung Seestraße, 2. BA</NamePrj>
+    <LblPrj>2026-014</LblPrj>
+    <Cur>EUR</Cur>
+    <CurLbl>EUR</CurLbl>
+    <DescriptionPrj><p><span>Fahrbahn-, Geh- und Radwegausbau zwischen Bahnübergang und Ortsausgang, Länge rd. 640 m, einschließlich Entwässerung und Straßenbeleuchtung.</span></p></DescriptionPrj>
+  </PrjInfo>
+  <Award>
+    <DP>83</DP>
+    <AwardInfo>
+      <Currency>EUR</Currency>
+      <CurrencyLabel>EUR</CurrencyLabel>
+      <AwardNo>VgV-2026-014-TB</AwardNo>
+    </AwardInfo>
+    <OWN>
+      <Address>
+        <Name1>Landkreis Oder-Spree</Name1>
+        <Name2>Amt für Straßenwesen</Name2>
+        <Street>Breitscheidstraße 7</Street>
+        <PostCode>15848</PostCode>
+        <City>Beeskow</City>
+        <Phone>03366 35-0</Phone>
+      </Address>
+    </OWN>
+    <BoQ ID="BOQ-2026-014">
+      <BoQInfo>
+        <Name>Leistungsverzeichnis Straßenbau</Name>
+        <LblBoQ>LV 01</LblBoQ>
+        <Date>2026-02-17</Date>
+        <BoQBkdn><Type>BoQLevel</Type><Length>2</Length><Num>1</Num></BoQBkdn>
+        <BoQBkdn><Type>BoQLevel</Type><Length>2</Length><Num>2</Num></BoQBkdn>
+        <BoQBkdn><Type>Item</Type><Length>4</Length></BoQBkdn>
+      </BoQInfo>
+      <BoQBody>
+        <BoQCtgy ID="T01" RNoPart="01">
+          <LblTx><p><span>Baustelleneinrichtung und Verkehrssicherung</span></p></LblTx>
+          <BoQBody>
+            <Remark ID="R01">
+              <CompleteText>
+                <DetailTxt>
+                  <p><span Bold="Yes">Vorbemerkung:</span><span> Die Arbeiten erfolgen unter halbseitiger Sperrung bei Aufrechterhaltung des Anliegerverkehrs. Die verkehrsrechtliche Anordnung wird vom Auftraggeber beigestellt.</span></p>
+                </DetailTxt>
+              </CompleteText>
+            </Remark>
+            <Itemlist>
+              <Item ID="P0010" RNoPart="0010">
+                <Qty>1.000</Qty>
+                <QU>psch</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Baustelle einrichten und räumen</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Baustelle einrichten, vorhalten für die Dauer der Bauzeit und nach Abschluss der Arbeiten vollständig räumen.</span></p>
+                      <p><span>Enthalten sind Baustellenzufahrt, Lagerflächen, Bauwagen sowie die Beweissicherung der angrenzenden Bebauung.</span></p>
+                      <p><span>Ausführende Firma für die Beweissicherung: </span><TextComplement Mark="1"><ComplCaption>Sachverständigenbüro</ComplCaption></TextComplement></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+              <Item ID="P0020" RNoPart="0020">
+                <Qty>140.000</Qty>
+                <QU>d</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Verkehrssicherung vorhalten, halbseitige Sperrung</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Verkehrssicherung nach RSA 21, Regelplan D II/1, vorhalten und täglich kontrollieren. Abrechnung je Kalendertag.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+              <Item ID="P0030" RNoPart="0030" Provis="Yes" ProvisQtyRelevant="No">
+                <Qty>30.000</Qty>
+                <QU>d</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Lichtsignalanlage für Baustellenverkehr vorhalten</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Mobile Lichtsignalanlage, 2-feldrig, verkehrsabhängig gesteuert, vorhalten und warten.</span></p>
+                      <p><span>Leistung wird nur auf gesonderte Anordnung des Auftraggebers abgerufen.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+            </Itemlist>
+          </BoQBody>
+        </BoQCtgy>
+        <BoQCtgy ID="T02" RNoPart="02">
+          <LblTx><p><span>Erd- und Oberbauarbeiten</span></p></LblTx>
+          <BoQBody>
+            <BoQCtgy ID="T0201" RNoPart="01">
+              <LblTx><p><span>Aufbruch und Bodenarbeiten</span></p></LblTx>
+              <BoQBody>
+                <Itemlist>
+                  <Item ID="P0110" RNoPart="0010">
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Asphaltbefestigung aufnehmen, d = 18 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Vorhandene Asphaltbefestigung im Fräsverfahren lagenweise aufnehmen, mittlere Dicke 18 cm.</span></p>
+                          <p><span>Das Fräsgut ist nach TL BuB E-StB getrennt zu erfassen. Die Entsorgung ist gesondert ausgeschrieben.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0120" RNoPart="0020">
+                    <Qty>765.000</Qty>
+                    <QU>t</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Ausbauasphalt entsorgen, Zuordnungswert &lt; 25 mg/kg PAK</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Ausbauasphalt laden, transportieren und in einer zugelassenen Anlage verwerten. Nachweis durch Wiegescheine.</span></p>
+                          <p><span>Entsorgungsanlage: </span><TextComplement Mark="2"><ComplCaption>Anlage / Standort</ComplCaption></TextComplement></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0130" RNoPart="0030">
+                    <Qty>1980.000</Qty>
+                    <QU>m3</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Boden lösen und seitlich lagern, BK 3-5</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Boden der Bodenklassen 3 bis 5 nach DIN 18300 lösen, seitlich lagern und für den Wiedereinbau bereithalten.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                </Itemlist>
+              </BoQBody>
+            </BoQCtgy>
+            <BoQCtgy ID="T0202" RNoPart="02">
+              <LblTx><p><span>Tragschichten und Deckschichten</span></p></LblTx>
+              <BoQBody>
+                <Itemlist>
+                  <Item ID="P0210" RNoPart="0010">
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Schottertragschicht 0/32 herstellen, d = 30 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Schottertragschicht ohne Bindemittel aus Korngemisch 0/32 nach TL SoB-StB liefern, einbauen und verdichten, Einbaudicke 30 cm.</span></p>
+                          <p><span>Verformungsmodul auf der Tragschicht: Ev2 &gt;= 120 MN/m², Verhältniswert Ev2/Ev1 &lt;= 2,2.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0220" RNoPart="0020">
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Asphalttragschicht AC 22 TS, d = 10 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Asphalttragschicht AC 22 T S, Bindemittel 50/70, nach TL Asphalt-StB einbauen und verdichten, Einbaudicke 10 cm.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0230" RNoPart="0030">
+                    <ALNGroupNo>1</ALNGroupNo>
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Asphaltdeckschicht AC 11 DS, d = 4 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Asphaltdeckschicht AC 11 D S, Bindemittel 50/70, einbauen und verdichten, Einbaudicke 4 cm, einschließlich Anspritzen der Unterlage.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0240" RNoPart="0040">
+                    <ALNGroupNo>1</ALNGroupNo>
+                    <ALNSerNo>1</ALNSerNo>
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Alternativ: Splittmastixasphalt SMA 8 S, d = 3,5 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Deckschicht aus Splittmastixasphalt SMA 8 S mit polymermodifiziertem Bindemittel 25/55-55 A, Einbaudicke 3,5 cm, einschließlich Absplittung.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                </Itemlist>
+              </BoQBody>
+            </BoQCtgy>
+          </BoQBody>
+        </BoQCtgy>
+        <BoQCtgy ID="T03" RNoPart="03">
+          <LblTx><p><span>Entwässerung und Nebenanlagen</span></p></LblTx>
+          <BoQBody>
+            <Itemlist>
+              <Item ID="P0310" RNoPart="0010">
+                <Qty>38.000</Qty>
+                <QU>St</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Straßenablauf DN 500 mit Schlammeimer setzen</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Straßenablauf DN 500 nach DIN 4052 aus Beton mit Schlammeimer und Aufsatz Klasse D 400 liefern und setzen, einschließlich Anschluss an die Grundleitung.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+              <Item ID="P0320" RNoPart="0020">
+                <Qty>1240.000</Qty>
+                <QU>m</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Hochbordstein 15/30 in Beton versetzen</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Hochbordstein 15/30/100 aus Beton nach DIN EN 1340 liefern und in Beton C 20/25 mit Rückenstütze versetzen, Ansichtshöhe 12 cm.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+              <Item ID="P0330" RNoPart="0030">
+                <Qty>60.000</Qty>
+                <QU>h</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Stundenlohnarbeiten Facharbeiter</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Stundenlohnarbeiten nach Anordnung des Auftraggebers, Facharbeiter mit Kleingerät, Abrechnung nach Stundenlohnzetteln.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+            </Itemlist>
+          </BoQBody>
+        </BoQCtgy>
+      </BoQBody>
+    </BoQ>
+  </Award>
+</GAEB>
+</script>
+
+<script src="gaeb.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const el = (id) => document.getElementById(id);
+  const nfMenge = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+  const nfGeld = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const state = {
+    lv: null,
+    zeilen: [],
+    zugeklappt: new Set(),
+    gewaehlt: null,
+    suche: '',
+    dateiname: '',
+    istBeispiel: false,
+  };
+
+  /* ---------------- Datei laden ---------------- */
+
+  async function dateiLaden(datei) {
+    try {
+      const xml = await GAEB.readFile(datei);
+      lvUebernehmen(GAEB.parse(xml), datei.name, false);
+    } catch (fehler) {
+      melden(fehler.message || String(fehler), true);
+    }
+  }
+
+  function lvUebernehmen(lv, dateiname, istBeispiel) {
+    state.lv = lv;
+    state.dateiname = dateiname;
+    state.istBeispiel = istBeispiel;
+    state.zugeklappt = new Set();
+    state.gewaehlt = null;
+    state.suche = '';
+    el('suchfeld').value = '';
+    el('suche-leeren').hidden = true;
+    state.zeilen = zeilenAufbauen(lv.nodes, 0, '', []);
+
+    kopfdatenZeichen();
+    tabelleZeichnen();
+    detailZeichnen(null);
+    statusZeichnen();
+
+    if (istBeispiel) {
+      melden('Beispiel-Leistungsverzeichnis. Über „Datei öffnen“ eine eigene GAEB-Datei laden – sie wird ausschließlich im Browser gelesen.', false);
+    } else if (lv.warnings.length) {
+      melden(lv.warnings.join(' '), true);
+    } else {
+      melden(dateiname + ' geladen: ' + lv.stats.items + ' Positionen.', false);
+    }
+  }
+
+  /** Flache Zeilenliste mit stabilen Schlüsseln für das Auf- und Zuklappen. */
+  function zeilenAufbauen(knoten, tiefe, elternKey, aus) {
+    knoten.forEach((k, i) => {
+      k._key = elternKey + '/' + i;
+      k._tiefe = tiefe;
+      k._eltern = elternKey;
+      aus.push(k);
+      if (k.children && k.children.length) zeilenAufbauen(k.children, tiefe + 1, k._key, aus);
+    });
+    return aus;
+  }
+
+  function melden(text, istFehler) {
+    const banner = el('banner');
+    el('banner-text').textContent = text;
+    banner.classList.toggle('fehler', !!istFehler);
+    banner.hidden = false;
+  }
+
+  /* ---------------- Kopfdaten ---------------- */
+
+  function kopfdatenZeichen() {
+    const lv = state.lv;
+    const phase = lv.info.phase ? 'X' + lv.info.phase : 'GAEB';
+    el('phase-anzeige').textContent = phase + (lv.info.phaseLabel ? ' · ' + lv.info.phaseLabel : '');
+    el('projektname').textContent = lv.project.name || lv.boq.name || 'Leistungsverzeichnis';
+    const beschreibung = el('projektbeschreibung');
+    beschreibung.textContent = lv.project.description || lv.boq.name || '';
+    beschreibung.hidden = !beschreibung.textContent;
+
+    const felder = [];
+    if (lv.project.label) felder.push(['Projektnummer', lv.project.label, true]);
+    if (lv.boq.label || lv.boq.name) felder.push(['Leistungsverzeichnis', lv.boq.label || lv.boq.name, false]);
+    if (lv.boq.outlineMask) felder.push(['OZ-Maske', lv.boq.outlineMask, true]);
+    felder.push(['Datenaustausch', 'GAEB DA XML ' + (lv.info.version || '?'), false]);
+    if (lv.info.date) felder.push(['Erstellt am', datum(lv.info.date), true]);
+    if (lv.info.program) felder.push(['Erzeugendes Programm', lv.info.program, false]);
+    felder.push(['Währung', lv.project.currencyLabel || lv.project.currency, false]);
+    for (const partei of lv.parties) {
+      felder.push([partei.role, [partei.name, partei.street, partei.city].filter(Boolean).join(', '), false]);
+    }
+
+    el('datenblatt').innerHTML = felder
+      .map(([bezeichnung, wert, mono]) =>
+        '<div><dt>' + text(bezeichnung) + '</dt><dd' + (mono ? ' class="zahl"' : '') + '>' + text(wert) + '</dd></div>')
+      .join('');
+    deckblattZeigen(deckblattOffen);
+  }
+
+  /* Auf schmalen Geräten startet das Deckblatt eingeklappt, damit die
+     Positionsliste sofort sichtbar ist. */
+  let deckblattOffen = !window.matchMedia('(max-width: 900px)').matches;
+
+  function deckblattZeigen(offen) {
+    deckblattOffen = offen;
+    el('deckblatt').hidden = !offen;
+    el('btn-deckblatt').setAttribute('aria-expanded', String(offen));
+  }
+
+  function datum(roh) {
+    const treffer = /^(\d{4})-(\d{2})-(\d{2})/.exec(roh);
+    return treffer ? treffer[3] + '.' + treffer[2] + '.' + treffer[1] : roh;
+  }
+
+  const text = (wert) =>
+    String(wert == null ? '' : wert).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  /* ---------------- Tabelle ---------------- */
+
+  function sichtbareZeilen() {
+    if (state.suche) {
+      const begriff = state.suche;
+      const sichtbar = new Set();
+      for (const knoten of state.zeilen) {
+        const haystack = knoten.search || (knoten.oz + ' ' + (knoten.title || knoten.shortText || '')).toLowerCase();
+        if (!haystack.includes(begriff)) continue;
+        sichtbar.add(knoten._key);
+        let eltern = knoten._eltern;
+        while (eltern) {
+          sichtbar.add(eltern);
+          eltern = eltern.slice(0, eltern.lastIndexOf('/'));
+        }
+      }
+      return state.zeilen.filter((k) => sichtbar.has(k._key));
+    }
+
+    const zu = Array.from(state.zugeklappt);
+    return state.zeilen.filter((k) => !zu.some((key) => k._key.startsWith(key + '/')));
+  }
+
+  function tabelleZeichnen() {
+    const lv = state.lv;
+    const mitPreisen = lv.stats.hasPrices;
+    const tabelle = el('tabelle');
+    tabelle.style.setProperty(
+      '--spalten',
+      mitPreisen ? 'minmax(88px, auto) minmax(0, 1fr) 110px 52px 110px 120px' : 'minmax(88px, auto) minmax(0, 1fr) 118px 60px'
+    );
+
+    const zeilen = sichtbareZeilen();
+    let html =
+      '<div class="kopfzeile"><span>OZ</span><span>Bezeichnung</span><span class="zahl">Menge</span><span>Einheit</span>' +
+      (mitPreisen ? '<span class="zahl">Einheitspreis</span><span class="zahl">Gesamtbetrag</span>' : '') +
+      '</div>';
+
+    for (const knoten of zeilen) {
+      html += zeileHtml(knoten, mitPreisen);
+    }
+
+    if (!zeilen.length) {
+      html +=
+        '<div class="platzhalter"><h3>Kein Treffer</h3><p>Für „' + text(state.suche) + '“ gibt es in diesem Leistungsverzeichnis keine Position.</p></div>';
+    }
+
+    tabelle.innerHTML = html;
+    el('treffer').textContent = state.suche
+      ? zeilen.filter((k) => k.kind === 'item').length + ' von ' + lv.stats.items + ' Positionen'
+      : '';
+  }
+
+  function zeileHtml(knoten, mitPreisen) {
+    const einzug = 'style="padding-left:' + knoten._tiefe * 18 + 'px"';
+    const klassen = ['zeile', knoten.kind === 'group' ? 'gruppe' : knoten.kind === 'text' ? 'hinweis' : 'position'];
+    klassen.push('ebene-' + knoten._tiefe);
+
+    const hatKinder = !!(knoten.children && knoten.children.length);
+    const zu = state.zugeklappt.has(knoten._key);
+    if (zu) klassen.push('zu');
+
+    const klapper = hatKinder
+      ? '<span class="klapper"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></span>'
+      : '';
+
+    let bezeichnung;
+    let marker = '';
+    if (knoten.kind === 'group') {
+      bezeichnung = knoten.title;
+      const anzahl = knoten.itemCount ? knoten.itemCount + (knoten.itemCount === 1 ? ' Position' : ' Positionen') : '';
+      if (anzahl) marker = '<span class="marker"><span class="chip">' + anzahl + '</span></span>';
+    } else if (knoten.kind === 'text') {
+      bezeichnung = knoten.title + ': ' + knoten.shortText;
+    } else {
+      bezeichnung = knoten.shortText;
+      const chips = knoten.flags.map((f) => '<span class="chip ' + f.code + '">' + text(f.label) + '</span>');
+      if (knoten.complements) {
+        chips.push('<span class="chip bte">' + knoten.complements + '× Bietertextergänzung</span>');
+      }
+      if (chips.length) marker = '<span class="marker">' + chips.join('') + '</span>';
+    }
+
+    let html =
+      '<div class="' + klassen.join(' ') + '" role="treeitem" tabindex="0" data-key="' + text(knoten._key) + '"' +
+      (state.gewaehlt === knoten._key ? ' aria-selected="true"' : '') +
+      (hatKinder ? ' aria-expanded="' + (zu ? 'false' : 'true') + '"' : '') + '>' +
+      '<span class="oz" ' + einzug + '>' + klapper + text(knoten.oz) + '</span>' +
+      '<span class="bezeichnung"><span>' + text(bezeichnung) + '</span>' + marker + '</span>';
+
+    if (knoten.kind === 'item') {
+      html +=
+        '<span class="zahl">' + (knoten.quantity === null ? '' : nfMenge.format(knoten.quantity)) + '</span>' +
+        '<span class="einheit">' + text(knoten.unit) + '</span>';
+      if (mitPreisen) {
+        html +=
+          '<span class="zahl">' + (knoten.unitPrice === null ? '' : nfGeld.format(knoten.unitPrice)) + '</span>' +
+          '<span class="zahl">' + (knoten.total ? nfGeld.format(knoten.total) : '') + '</span>';
+      }
+    } else {
+      html += '<span></span><span></span>';
+      if (mitPreisen) {
+        html += '<span></span><span class="zahl">' + (knoten.total ? nfGeld.format(knoten.total) : '') + '</span>';
+      }
+    }
+
+    return html + '</div>';
+  }
+
+  /* ---------------- Detailspalte ---------------- */
+
+  function detailZeichnen(knoten) {
+    const ziel = el('detail-inhalt');
+    if (!knoten) {
+      ziel.innerHTML =
+        '<div class="platzhalter"><h3>Position auswählen</h3>' +
+        '<p>Der vollständige Leistungstext erscheint hier – einschließlich Bietertextergänzungen und Positionsart.</p></div>';
+      el('detail').classList.remove('offen');
+      return;
+    }
+
+    const istPosition = knoten.kind === 'item';
+    const eyebrow = istPosition ? 'Position' : knoten.kind === 'group' ? 'Gliederungsstufe' : knoten.title;
+    let html =
+      '<p class="eyebrow">' + text(eyebrow) + '</p>' +
+      '<p class="oz-gross">' + text(knoten.oz || '–') + '</p>' +
+      '<h2>' + text(knoten.kind === 'group' ? knoten.title : knoten.shortText) + '</h2>';
+
+    const chips = (knoten.flags || []).map((f) => '<span class="chip ' + f.code + '">' + text(f.label) + '</span>');
+    if (knoten.complements) chips.push('<span class="chip bte">' + knoten.complements + '× Bietertextergänzung</span>');
+    if (chips.length) html += '<div class="marker">' + chips.join('') + '</div>';
+
+    const felder = [];
+    if (istPosition) {
+      felder.push(['Menge', knoten.quantity === null ? '–' : nfMenge.format(knoten.quantity)]);
+      felder.push(['Einheit', knoten.unit || '–']);
+      if (knoten.unitPrice !== null) felder.push(['Einheitspreis', nfGeld.format(knoten.unitPrice)]);
+      if (knoten.total) felder.push(['Gesamtbetrag', nfGeld.format(knoten.total)]);
+    } else if (knoten.kind === 'group') {
+      felder.push(['Positionen', String(knoten.itemCount || 0)]);
+      if (knoten.total) felder.push(['Zwischensumme', nfGeld.format(knoten.total)]);
+    }
+    if (felder.length) {
+      html +=
+        '<dl class="mengenblock">' +
+        felder.map(([b, w]) => '<div><dt>' + text(b) + '</dt><dd>' + text(w) + '</dd></div>').join('') +
+        '</dl>';
+    }
+
+    html += '<div class="langtext">' + (knoten.html || '<p>Für dieses Element ist kein Langtext hinterlegt.</p>') + '</div>';
+    if (knoten.id) html += '<p class="detail-fuss">GAEB-Kennung: ' + text(knoten.id) + '</p>';
+
+    ziel.innerHTML = html;
+    ziel.scrollTop = 0;
+    el('detail').classList.add('offen');
+  }
+
+  function waehlen(key) {
+    state.gewaehlt = key;
+    const knoten = state.zeilen.find((k) => k._key === key);
+    for (const zeile of document.querySelectorAll('.zeile')) {
+      zeile.setAttribute('aria-selected', zeile.dataset.key === key ? 'true' : 'false');
+    }
+    detailZeichnen(knoten || null);
+  }
+
+  function umschalten(key) {
+    if (state.zugeklappt.has(key)) state.zugeklappt.delete(key);
+    else state.zugeklappt.add(key);
+    tabelleZeichnen();
+  }
+
+  /* ---------------- Statuszeile ---------------- */
+
+  function statusZeichnen() {
+    const lv = state.lv;
+    const teile = [
+      '<span><b>' + lv.stats.items + '</b> Positionen</span>',
+      '<span><b>' + lv.stats.groups + '</b> Gliederungsstufen</span>',
+    ];
+    if (lv.stats.texts) teile.push('<span><b>' + lv.stats.texts + '</b> Hinweistexte</span>');
+    teile.push('<span>' + text(state.dateiname) + '</span>');
+
+    const summe = lv.stats.declaredTotal != null ? lv.stats.declaredTotal : lv.stats.total;
+    if (lv.stats.hasPrices && summe) {
+      teile.push('<span class="summe">Angebotssumme netto: <b>' + nfGeld.format(summe) + ' ' + text(lv.project.currency) + '</b></span>');
+    } else {
+      teile.push('<span class="summe">Ohne Preise – Angebotsaufforderung</span>');
+    }
+    el('statuszeile').innerHTML = teile.join('');
+  }
+
+  /* ---------------- Export ---------------- */
+
+  function csvErzeugen() {
+    const lv = state.lv;
+    const spalten = ['OZ', 'Art', 'Bezeichnung', 'Menge', 'Einheit'];
+    if (lv.stats.hasPrices) spalten.push('Einheitspreis', 'Gesamtbetrag');
+    const zeilen = [spalten.join(';')];
+
+    for (const knoten of state.zeilen) {
+      const art = knoten.kind === 'item' ? 'Position' : knoten.kind === 'group' ? 'Gliederung' : knoten.title;
+      const werte = [
+        knoten.oz,
+        art,
+        knoten.kind === 'group' ? knoten.title : knoten.shortText,
+        knoten.quantity == null ? '' : String(knoten.quantity).replace('.', ','),
+        knoten.unit || '',
+      ];
+      if (lv.stats.hasPrices) {
+        werte.push(knoten.unitPrice == null ? '' : String(knoten.unitPrice).replace('.', ','));
+        werte.push(knoten.total ? String(knoten.total.toFixed(2)).replace('.', ',') : '');
+      }
+      zeilen.push(werte.map((w) => '"' + String(w).replace(/"/g, '""') + '"').join(';'));
+    }
+    return zeilen.join('\r\n');
+  }
+
+  async function csvExportieren() {
+    const csv = '﻿' + csvErzeugen();
+    const name = (state.dateiname.replace(/\.[^.]+$/, '') || 'leistungsverzeichnis') + '.csv';
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+    try {
+      await navigator.clipboard.writeText(csv);
+      melden('CSV in die Zwischenablage kopiert und als ' + name + ' zum Download angeboten (Semikolon-getrennt, Excel-tauglich).', false);
+    } catch (fehler) {
+      melden('CSV als ' + name + ' heruntergeladen (Semikolon-getrennt, Excel-tauglich).', false);
+    }
+  }
+
+  /* ---------------- Ereignisse ---------------- */
+
+  el('btn-oeffnen').addEventListener('click', () => el('datei').click());
+  el('datei').addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) dateiLaden(e.target.files[0]);
+    e.target.value = '';
+  });
+
+  el('tabelle').addEventListener('click', (e) => {
+    const zeile = e.target.closest('.zeile');
+    if (!zeile) return;
+    const key = zeile.dataset.key;
+    if (e.target.closest('.klapper')) umschalten(key);
+    else waehlen(key);
+  });
+
+  el('tabelle').addEventListener('keydown', (e) => {
+    const zeile = e.target.closest('.zeile');
+    if (!zeile) return;
+    const key = zeile.dataset.key;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      waehlen(key);
+    } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      const knoten = state.zeilen.find((k) => k._key === key);
+      if (knoten && knoten.children && knoten.children.length) {
+        e.preventDefault();
+        const zu = state.zugeklappt.has(key);
+        if (e.key === 'ArrowRight' ? zu : !zu) umschalten(key);
+      }
+    } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const alle = Array.from(document.querySelectorAll('.zeile'));
+      const naechste = alle[alle.indexOf(zeile) + (e.key === 'ArrowDown' ? 1 : -1)];
+      if (naechste) naechste.focus();
+    }
+  });
+
+  let suchTimer = null;
+  el('suchfeld').addEventListener('input', (e) => {
+    const wert = e.target.value.trim().toLowerCase();
+    el('suche-leeren').hidden = !wert;
+    clearTimeout(suchTimer);
+    suchTimer = setTimeout(() => {
+      state.suche = wert;
+      tabelleZeichnen();
+    }, 120);
+  });
+  el('suche-leeren').addEventListener('click', () => {
+    el('suchfeld').value = '';
+    el('suche-leeren').hidden = true;
+    state.suche = '';
+    tabelleZeichnen();
+    el('suchfeld').focus();
+  });
+
+  el('btn-deckblatt').addEventListener('click', () => deckblattZeigen(!deckblattOffen));
+  el('btn-alle-auf').addEventListener('click', () => {
+    state.zugeklappt.clear();
+    tabelleZeichnen();
+  });
+  el('btn-alle-zu').addEventListener('click', () => {
+    state.zugeklappt = new Set(state.zeilen.filter((k) => k.children && k.children.length).map((k) => k._key));
+    tabelleZeichnen();
+  });
+  el('btn-csv').addEventListener('click', csvExportieren);
+  el('btn-drucken').addEventListener('click', () => window.print());
+  el('banner-zu').addEventListener('click', () => { el('banner').hidden = true; });
+  el('detail-zu').addEventListener('click', () => el('detail').classList.remove('offen'));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') el('detail').classList.remove('offen');
+    if (e.key === '/' && document.activeElement !== el('suchfeld')) {
+      e.preventDefault();
+      el('suchfeld').focus();
+    }
+  });
+
+  /* Datei per Drag & Drop */
+  let ablageZaehler = 0;
+  window.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    ablageZaehler += 1;
+    el('ablage').classList.add('aktiv');
+  });
+  window.addEventListener('dragover', (e) => e.preventDefault());
+  window.addEventListener('dragleave', () => {
+    ablageZaehler = Math.max(0, ablageZaehler - 1);
+    if (!ablageZaehler) el('ablage').classList.remove('aktiv');
+  });
+  window.addEventListener('drop', (e) => {
+    e.preventDefault();
+    ablageZaehler = 0;
+    el('ablage').classList.remove('aktiv');
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) dateiLaden(e.dataTransfer.files[0]);
+  });
+
+  /* Beispiel-Leistungsverzeichnis als Startzustand */
+  try {
+    const beispiel = document.getElementById('beispiel-lv').textContent.trim();
+    lvUebernehmen(GAEB.parse(beispiel), 'Musterprojekt.x83', true);
+  } catch (fehler) {
+    melden('Beispieldaten konnten nicht geladen werden: ' + fehler.message, true);
+  }
+})();
+</script>
+</body>
+</html>

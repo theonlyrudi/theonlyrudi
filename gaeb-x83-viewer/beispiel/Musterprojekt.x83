@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GAEB xmlns="http://www.gaeb.de/GAEB_DA_XML/DA86/3.2">
+  <GAEBInfo>
+    <Version>3.2</Version>
+    <VersDate>2013-12</VersDate>
+    <Date>2026-02-17</Date>
+    <Time>09:42:11</Time>
+    <ProgSystem>Beispieldaten GAEB-Viewer</ProgSystem>
+  </GAEBInfo>
+  <PrjInfo>
+    <NamePrj>Grundhafte Erneuerung Seestraße, 2. BA</NamePrj>
+    <LblPrj>2026-014</LblPrj>
+    <Cur>EUR</Cur>
+    <CurLbl>EUR</CurLbl>
+    <DescriptionPrj><p><span>Fahrbahn-, Geh- und Radwegausbau zwischen Bahnübergang und Ortsausgang, Länge rd. 640 m, einschließlich Entwässerung und Straßenbeleuchtung.</span></p></DescriptionPrj>
+  </PrjInfo>
+  <Award>
+    <DP>83</DP>
+    <AwardInfo>
+      <Currency>EUR</Currency>
+      <CurrencyLabel>EUR</CurrencyLabel>
+      <AwardNo>VgV-2026-014-TB</AwardNo>
+    </AwardInfo>
+    <OWN>
+      <Address>
+        <Name1>Landkreis Oder-Spree</Name1>
+        <Name2>Amt für Straßenwesen</Name2>
+        <Street>Breitscheidstraße 7</Street>
+        <PostCode>15848</PostCode>
+        <City>Beeskow</City>
+        <Phone>03366 35-0</Phone>
+      </Address>
+    </OWN>
+    <BoQ ID="BOQ-2026-014">
+      <BoQInfo>
+        <Name>Leistungsverzeichnis Straßenbau</Name>
+        <LblBoQ>LV 01</LblBoQ>
+        <Date>2026-02-17</Date>
+        <BoQBkdn><Type>BoQLevel</Type><Length>2</Length><Num>1</Num></BoQBkdn>
+        <BoQBkdn><Type>BoQLevel</Type><Length>2</Length><Num>2</Num></BoQBkdn>
+        <BoQBkdn><Type>Item</Type><Length>4</Length></BoQBkdn>
+      </BoQInfo>
+      <BoQBody>
+        <BoQCtgy ID="T01" RNoPart="01">
+          <LblTx><p><span>Baustelleneinrichtung und Verkehrssicherung</span></p></LblTx>
+          <BoQBody>
+            <Remark ID="R01">
+              <CompleteText>
+                <DetailTxt>
+                  <p><span Bold="Yes">Vorbemerkung:</span><span> Die Arbeiten erfolgen unter halbseitiger Sperrung bei Aufrechterhaltung des Anliegerverkehrs. Die verkehrsrechtliche Anordnung wird vom Auftraggeber beigestellt.</span></p>
+                </DetailTxt>
+              </CompleteText>
+            </Remark>
+            <Itemlist>
+              <Item ID="P0010" RNoPart="0010">
+                <Qty>1.000</Qty>
+                <QU>psch</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Baustelle einrichten und räumen</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Baustelle einrichten, vorhalten für die Dauer der Bauzeit und nach Abschluss der Arbeiten vollständig räumen.</span></p>
+                      <p><span>Enthalten sind Baustellenzufahrt, Lagerflächen, Bauwagen sowie die Beweissicherung der angrenzenden Bebauung.</span></p>
+                      <p><span>Ausführende Firma für die Beweissicherung: </span><TextComplement Mark="1"><ComplCaption>Sachverständigenbüro</ComplCaption></TextComplement></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+              <Item ID="P0020" RNoPart="0020">
+                <Qty>140.000</Qty>
+                <QU>d</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Verkehrssicherung vorhalten, halbseitige Sperrung</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Verkehrssicherung nach RSA 21, Regelplan D II/1, vorhalten und täglich kontrollieren. Abrechnung je Kalendertag.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+              <Item ID="P0030" RNoPart="0030" Provis="Yes" ProvisQtyRelevant="No">
+                <Qty>30.000</Qty>
+                <QU>d</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Lichtsignalanlage für Baustellenverkehr vorhalten</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Mobile Lichtsignalanlage, 2-feldrig, verkehrsabhängig gesteuert, vorhalten und warten.</span></p>
+                      <p><span>Leistung wird nur auf gesonderte Anordnung des Auftraggebers abgerufen.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+            </Itemlist>
+          </BoQBody>
+        </BoQCtgy>
+        <BoQCtgy ID="T02" RNoPart="02">
+          <LblTx><p><span>Erd- und Oberbauarbeiten</span></p></LblTx>
+          <BoQBody>
+            <BoQCtgy ID="T0201" RNoPart="01">
+              <LblTx><p><span>Aufbruch und Bodenarbeiten</span></p></LblTx>
+              <BoQBody>
+                <Itemlist>
+                  <Item ID="P0110" RNoPart="0010">
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Asphaltbefestigung aufnehmen, d = 18 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Vorhandene Asphaltbefestigung im Fräsverfahren lagenweise aufnehmen, mittlere Dicke 18 cm.</span></p>
+                          <p><span>Das Fräsgut ist nach TL BuB E-StB getrennt zu erfassen. Die Entsorgung ist gesondert ausgeschrieben.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0120" RNoPart="0020">
+                    <Qty>765.000</Qty>
+                    <QU>t</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Ausbauasphalt entsorgen, Zuordnungswert &lt; 25 mg/kg PAK</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Ausbauasphalt laden, transportieren und in einer zugelassenen Anlage verwerten. Nachweis durch Wiegescheine.</span></p>
+                          <p><span>Entsorgungsanlage: </span><TextComplement Mark="2"><ComplCaption>Anlage / Standort</ComplCaption></TextComplement></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0130" RNoPart="0030">
+                    <Qty>1980.000</Qty>
+                    <QU>m3</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Boden lösen und seitlich lagern, BK 3-5</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Boden der Bodenklassen 3 bis 5 nach DIN 18300 lösen, seitlich lagern und für den Wiedereinbau bereithalten.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                </Itemlist>
+              </BoQBody>
+            </BoQCtgy>
+            <BoQCtgy ID="T0202" RNoPart="02">
+              <LblTx><p><span>Tragschichten und Deckschichten</span></p></LblTx>
+              <BoQBody>
+                <Itemlist>
+                  <Item ID="P0210" RNoPart="0010">
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Schottertragschicht 0/32 herstellen, d = 30 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Schottertragschicht ohne Bindemittel aus Korngemisch 0/32 nach TL SoB-StB liefern, einbauen und verdichten, Einbaudicke 30 cm.</span></p>
+                          <p><span>Verformungsmodul auf der Tragschicht: Ev2 &gt;= 120 MN/m², Verhältniswert Ev2/Ev1 &lt;= 2,2.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0220" RNoPart="0020">
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Asphalttragschicht AC 22 TS, d = 10 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Asphalttragschicht AC 22 T S, Bindemittel 50/70, nach TL Asphalt-StB einbauen und verdichten, Einbaudicke 10 cm.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0230" RNoPart="0030">
+                    <ALNGroupNo>1</ALNGroupNo>
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Asphaltdeckschicht AC 11 DS, d = 4 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Asphaltdeckschicht AC 11 D S, Bindemittel 50/70, einbauen und verdichten, Einbaudicke 4 cm, einschließlich Anspritzen der Unterlage.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                  <Item ID="P0240" RNoPart="0040">
+                    <ALNGroupNo>1</ALNGroupNo>
+                    <ALNSerNo>1</ALNSerNo>
+                    <Qty>4250.000</Qty>
+                    <QU>m2</QU>
+                    <Description>
+                      <CompleteText>
+                        <OutlineText><OutlTxt><TextOutlTxt><p><span>Alternativ: Splittmastixasphalt SMA 8 S, d = 3,5 cm</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                        <DetailTxt>
+                          <p><span>Deckschicht aus Splittmastixasphalt SMA 8 S mit polymermodifiziertem Bindemittel 25/55-55 A, Einbaudicke 3,5 cm, einschließlich Absplittung.</span></p>
+                        </DetailTxt>
+                      </CompleteText>
+                    </Description>
+                  </Item>
+                </Itemlist>
+              </BoQBody>
+            </BoQCtgy>
+          </BoQBody>
+        </BoQCtgy>
+        <BoQCtgy ID="T03" RNoPart="03">
+          <LblTx><p><span>Entwässerung und Nebenanlagen</span></p></LblTx>
+          <BoQBody>
+            <Itemlist>
+              <Item ID="P0310" RNoPart="0010">
+                <Qty>38.000</Qty>
+                <QU>St</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Straßenablauf DN 500 mit Schlammeimer setzen</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Straßenablauf DN 500 nach DIN 4052 aus Beton mit Schlammeimer und Aufsatz Klasse D 400 liefern und setzen, einschließlich Anschluss an die Grundleitung.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+              <Item ID="P0320" RNoPart="0020">
+                <Qty>1240.000</Qty>
+                <QU>m</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Hochbordstein 15/30 in Beton versetzen</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Hochbordstein 15/30/100 aus Beton nach DIN EN 1340 liefern und in Beton C 20/25 mit Rückenstütze versetzen, Ansichtshöhe 12 cm.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+              <Item ID="P0330" RNoPart="0030">
+                <Qty>60.000</Qty>
+                <QU>h</QU>
+                <Description>
+                  <CompleteText>
+                    <OutlineText><OutlTxt><TextOutlTxt><p><span>Stundenlohnarbeiten Facharbeiter</span></p></TextOutlTxt></OutlTxt></OutlineText>
+                    <DetailTxt>
+                      <p><span>Stundenlohnarbeiten nach Anordnung des Auftraggebers, Facharbeiter mit Kleingerät, Abrechnung nach Stundenlohnzetteln.</span></p>
+                    </DetailTxt>
+                  </CompleteText>
+                </Description>
+              </Item>
+            </Itemlist>
+          </BoQBody>
+        </BoQCtgy>
+      </BoQBody>
+    </BoQ>
+  </Award>
+</GAEB>
