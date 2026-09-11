@@ -60,23 +60,30 @@ weiter, weil die eingebettete Seite keine eigenen Downloads starten darf.
 | `gaeb.js` | Parser für GAEB DA XML, ZIP-Entpackung, Encoding-Erkennung |
 | `beispiel/Musterprojekt.x83` | Beispiel-LV (Straßenbau), auch in `index.html` eingebettet |
 | `tools/embed-beispiel.sh` | überträgt die Beispieldatei in den eingebetteten Startdatensatz |
-| `tools/build-web.sh` | erzeugt `dist/gaeb/` für den Upload auf einen Webserver |
+| `tools/build.sh` | erzeugt die verteilbaren Fassungen unter `dist/` |
 
 Das Beispiel steckt zusätzlich direkt in `index.html`, weil ein Browser unter
 `file://` keine Nachbardatei nachladen darf. Nach einer Änderung an
 `beispiel/Musterprojekt.x83` gleicht `tools/embed-beispiel.sh` beides wieder an.
 
-## Auf einem Webserver bereitstellen
+## Fassungen erzeugen
 
 ```
-tools/build-web.sh
+tools/build.sh
 ```
 
-legt unter `dist/gaeb/` die Fassung für einen Webserver ab: dieselbe Anwendung,
-aber mit leerer Ablagefläche statt des Beispiel-LV beim Start (das Beispiel
-bleibt über einen Knopf erreichbar). Den Inhalt des Ordners per FTP in das
-Zielverzeichnis hochladen, etwa nach `htdocs/gaeb/`, dann ist der Viewer unter
-`https://<domain>/gaeb/` erreichbar.
+legt unter `dist/` drei Fassungen ab:
+
+| Ergebnis | Zweck |
+| --- | --- |
+| `dist/gaeb/` | Webserver, zwei Dateien – die übliche Wahl |
+| `dist/gaeb-eine-datei/` | Webserver, alles in einer `index.html` |
+| `dist/GAEB-Viewer.html` | Einzeldatei zum Weitergeben, startet mit dem Beispiel-LV |
+
+Für den Webserver den Inhalt des gewünschten Ordners per FTP hochladen, etwa
+nach `htdocs/gaeb/` – dann ist der Viewer unter `https://<domain>/gaeb/`
+erreichbar. Beide Webserver-Fassungen starten mit leerer Ablagefläche statt mit
+dem Beispiel-LV; das Beispiel bleibt über einen Knopf erreichbar.
 
 Die mitgelieferte `.htaccess` setzt die Zeichenkodierung auf UTF-8 – ohne sie
 liefern manche Apache-Konfigurationen ISO-8859-1 im HTTP-Header aus, was das
