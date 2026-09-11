@@ -65,6 +65,18 @@ Das Beispiel steckt zusätzlich direkt in `index.html`, weil ein Browser unter
 `file://` keine Nachbardatei nachladen darf. Nach einer Änderung an
 `beispiel/Musterprojekt.x83` gleicht `tools/embed-beispiel.sh` beides wieder an.
 
+## Einsatz im Firmennetz
+
+Die Seite lädt nichts nach: keine Schriften, keine Bibliotheken, keine
+Telemetrie. Sie funktioniert offline und ohne Internetzugang, und die geöffnete
+GAEB-Datei verlässt den Rechner nicht – relevant, solange Vergabeunterlagen vor
+dem Submissionstermin vertraulich sind.
+
+Für eine Einbindung in SharePoint Online genügt es **nicht**, die Datei in eine
+Dokumentbibliothek zu legen: SharePoint rendert dort abgelegtes HTML nicht als
+Seite. Der tragfähige Weg ist ein SPFx-Webpart aus dem App-Katalog; der Parser
+`gaeb.js` lässt sich dafür unverändert übernehmen.
+
 ## Grenzen
 
 Der Viewer zeigt an, er rechnet nicht: Mengenermittlungen (REB-Ansätze),
