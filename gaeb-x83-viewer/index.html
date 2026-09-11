@@ -197,6 +197,9 @@ button, input, select { font: inherit; color: inherit; }
   background: var(--line);
   min-height: 0;
 }
+.workspace.leer { grid-template-columns: minmax(0, 1fr); }
+.workspace.leer .detail { display: none; }
+.workspace.leer .lv-toolbar { display: none; }
 .lv, .detail { background: var(--paper); display: flex; flex-direction: column; min-height: 0; min-width: 0; }
 
 .lv-toolbar {
@@ -403,6 +406,37 @@ button, input, select { font: inherit; color: inherit; }
 
 /* ---------- Platzhalter, Statuszeile ---------- */
 .platzhalter { padding: 28px 20px; color: var(--ink-2); max-width: 46ch; }
+.leerzustand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  margin: 24px 16px;
+  padding: 32px 28px;
+  border: 2px dashed var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  max-width: 60ch;
+}
+.leerzustand h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  margin: 0;
+  color: var(--ink);
+}
+.leerzustand p { margin: 0; max-width: 52ch; }
+.leerzustand ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.leerzustand .knoepfe { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.leerzustand .fussnote { font-size: 13px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 12px; width: 100%; }
 .platzhalter h3 { font-family: var(--font-display); font-size: 15px; margin: 0 0 6px; color: var(--ink); }
 .platzhalter ul { margin: 10px 0 0; padding-left: 18px; }
 .platzhalter li { margin-bottom: 4px; }
@@ -501,11 +535,11 @@ button, input, select { font: inherit; color: inherit; }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" data-start="beispiel">
   <header class="topbar">
     <div class="brand">
       <h1>GAEB-Leistungsverzeichnis</h1>
-      <span class="phase" id="phase-anzeige">X83 · Angebotsaufforderung</span>
+      <span class="phase" id="phase-anzeige">DA XML · X81 bis X89</span>
     </div>
     <div class="actions">
       <button class="btn btn-primary" id="btn-oeffnen">
@@ -521,7 +555,7 @@ button, input, select { font: inherit; color: inherit; }
     </div>
   </header>
 
-  <div class="hinweisbanner" id="banner" role="status">
+  <div class="hinweisbanner" id="banner" role="status" hidden>
     <span id="banner-text"></span>
     <button type="button" id="banner-zu">Schließen</button>
   </div>
@@ -853,6 +887,8 @@ button, input, select { font: inherit; color: inherit; }
     el('suchfeld').value = '';
     el('suche-leeren').hidden = true;
     state.zeilen = zeilenAufbauen(lv.nodes, 0, '', []);
+    for (const id of NUR_MIT_LV) el(id).disabled = false;
+    document.querySelector('.workspace').classList.remove('leer');
 
     kopfdatenZeichen();
     tabelleZeichnen();
@@ -878,6 +914,52 @@ button, input, select { font: inherit; color: inherit; }
       if (k.children && k.children.length) zeilenAufbauen(k.children, tiefe + 1, k._key, aus);
     });
     return aus;
+  }
+
+  const NUR_MIT_LV = ['btn-deckblatt', 'btn-alle-auf', 'btn-alle-zu', 'btn-csv', 'btn-drucken', 'suchfeld'];
+
+  /** Startbildschirm ohne Datei – die Ablagefläche ist hier der Inhalt. */
+  function leerzustandZeigen() {
+    state.lv = null;
+    state.zeilen = [];
+    el('deckblatt').hidden = true;
+    for (const id of NUR_MIT_LV) el(id).disabled = true;
+    el('treffer').textContent = '';
+
+    el('tabelle').innerHTML =
+      '<div class="leerzustand">' +
+      '<h2>GAEB-Datei öffnen</h2>' +
+      '<p>Datei hierher ziehen oder auswählen. Sie wird im Browser gelesen und nicht übertragen – ' +
+      'auch nicht an diesen Server.</p>' +
+      '<ul>' +
+      '<li>GAEB DA XML 3.x, Austauschphasen X81 bis X89</li>' +
+      '<li>Preise und Angebotssumme bei X84 und X86</li>' +
+      '<li>ZIP-Archive werden direkt entpackt</li>' +
+      '</ul>' +
+      '<div class="knoepfe">' +
+      '<button class="btn btn-primary" type="button" id="leer-oeffnen">Datei öffnen</button>' +
+      '<button class="btn" type="button" id="leer-beispiel">Beispiel-LV ansehen</button>' +
+      '</div>' +
+      '<p class="fussnote">Die älteren Formate GAEB 90 (.d83) und GAEB 2000 (.p83) sind kein XML ' +
+      'und können hier nicht gelesen werden.</p>' +
+      '</div>';
+
+    el('leer-oeffnen').addEventListener('click', () => el('datei').click());
+    el('leer-beispiel').addEventListener('click', beispielLaden);
+
+    el('detail-inhalt').innerHTML = '';
+    el('detail').classList.remove('offen');
+    document.querySelector('.workspace').classList.add('leer');
+    el('statuszeile').innerHTML = '<span>Keine Datei geladen</span>';
+    el('phase-anzeige').textContent = 'DA XML · X81 bis X89';
+  }
+
+  function beispielLaden() {
+    try {
+      lvUebernehmen(GAEB.parse(document.getElementById('beispiel-lv').textContent.trim()), 'Musterprojekt.x83', true);
+    } catch (fehler) {
+      melden('Beispieldaten konnten nicht geladen werden: ' + fehler.message, true);
+    }
   }
 
   function melden(text, istFehler) {
@@ -1291,13 +1373,10 @@ button, input, select { font: inherit; color: inherit; }
     if (e.dataTransfer.files && e.dataTransfer.files[0]) dateiLaden(e.dataTransfer.files[0]);
   });
 
-  /* Beispiel-Leistungsverzeichnis als Startzustand */
-  try {
-    const beispiel = document.getElementById('beispiel-lv').textContent.trim();
-    lvUebernehmen(GAEB.parse(beispiel), 'Musterprojekt.x83', true);
-  } catch (fehler) {
-    melden('Beispieldaten konnten nicht geladen werden: ' + fehler.message, true);
-  }
+  /* Startzustand: data-start="beispiel" zeigt das Muster-LV, alles andere
+     beginnt mit der leeren Ablagefläche (Fassung für den Webserver). */
+  if (document.querySelector('.app').dataset.start === 'beispiel') beispielLaden();
+  else leerzustandZeigen();
 })();
 </script>
 </body>
