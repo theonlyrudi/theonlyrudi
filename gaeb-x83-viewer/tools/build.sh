@@ -3,10 +3,12 @@
 #
 #   dist/gaeb/               Webserver, zwei Dateien (index.html + gaeb.js)
 #   dist/gaeb-eine-datei/    Webserver, alles in einer index.html
-#   dist/GAEB-Viewer.html    Einzeldatei zum Weitergeben, startet mit Beispiel-LV
+#   dist/GAEB-Viewer.html    Einzeldatei zum Weitergeben (gleicher Inhalt,
+#                            sprechender Name für den Versand)
 #
-# Die beiden Webserver-Fassungen starten mit leerer Ablagefläche statt mit dem
-# Beispiel-LV; jeweils eine .htaccess legt UTF-8 fest.
+# Alle Fassungen starten mit leerer Ablagefläche; das Beispiel-LV bleibt über
+# einen Knopf erreichbar. Den Webserver-Fassungen liegt eine .htaccess bei, die
+# UTF-8 festlegt.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -48,18 +50,17 @@ htaccess "$ziel/gaeb"
 einbetten "$ziel/gaeb/index.html" > "$ziel/gaeb-eine-datei/index.html"
 htaccess "$ziel/gaeb-eine-datei"
 
-# 3) Einzeldatei zum Weitergeben, mit Beispiel-LV beim Start
-einbetten index.html > "$ziel/GAEB-Viewer.html"
+# 3) Dieselbe Einzeldatei unter sprechendem Namen zum Weitergeben
+cp "$ziel/gaeb-eine-datei/index.html" "$ziel/GAEB-Viewer.html"
 
 # Ergebnis prüfen, damit keine halbe Datei ausgeliefert wird
-for datei in "$ziel/gaeb/index.html" "$ziel/gaeb-eine-datei/index.html"; do
+for datei in "$ziel/gaeb/index.html" "$ziel/gaeb-eine-datei/index.html" "$ziel/GAEB-Viewer.html"; do
   grep -q 'data-start="leer"' "$datei" || { echo "FEHLER: Startattribut fehlt in $datei" >&2; exit 1; }
 done
 for datei in "$ziel/gaeb-eine-datei/index.html" "$ziel/GAEB-Viewer.html"; do
   grep -q '<script src=' "$datei" && { echo "FEHLER: $datei lädt noch eine externe Datei" >&2; exit 1; }
   grep -q 'GAEB.readFile' "$datei" || { echo "FEHLER: Parser fehlt in $datei" >&2; exit 1; }
 done
-grep -q 'data-start="beispiel"' "$ziel/GAEB-Viewer.html" || { echo "FEHLER: Beispielstart fehlt" >&2; exit 1; }
 
 echo "Fertig:"
 find "$ziel" -type f -exec du -h {} + | sort -k2

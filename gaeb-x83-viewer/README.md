@@ -78,12 +78,16 @@ legt unter `dist/` drei Fassungen ab:
 | --- | --- |
 | `dist/gaeb/` | Webserver, zwei Dateien – die übliche Wahl |
 | `dist/gaeb-eine-datei/` | Webserver, alles in einer `index.html` |
-| `dist/GAEB-Viewer.html` | Einzeldatei zum Weitergeben, startet mit dem Beispiel-LV |
+| `dist/GAEB-Viewer.html` | dieselbe Einzeldatei, sprechend benannt für den Versand |
 
 Für den Webserver den Inhalt des gewünschten Ordners per FTP hochladen, etwa
 nach `htdocs/gaeb/` – dann ist der Viewer unter `https://<domain>/gaeb/`
-erreichbar. Beide Webserver-Fassungen starten mit leerer Ablagefläche statt mit
-dem Beispiel-LV; das Beispiel bleibt über einen Knopf erreichbar.
+erreichbar.
+
+Alle erzeugten Fassungen starten mit leerer Ablagefläche; das Beispiel-LV ist
+dort über einen Knopf erreichbar. Nur die Quelldatei `index.html` selbst öffnet
+mit dem Beispiel, gesteuert über `data-start="beispiel"` am Element `.app` –
+praktisch beim Entwickeln und für eine Vorführung.
 
 Die mitgelieferte `.htaccess` setzt die Zeichenkodierung auf UTF-8 – ohne sie
 liefern manche Apache-Konfigurationen ISO-8859-1 im HTTP-Header aus, was das
